@@ -1,0 +1,10 @@
+---
+
+- name: Playbook
+  hosts: localhost
+  roles: 
+    - initial
+    #- install_vagrant
+    #- install_docker
+
+...
