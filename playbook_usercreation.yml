@@ -1,7 +1,7 @@
 ---
 
 - name: Playbook_usercreation
-  hosts: localhost
+  hosts: samba
   roles: 
     - user_creation
 

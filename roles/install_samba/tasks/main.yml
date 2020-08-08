@@ -1,0 +1,31 @@
+---
+
+- name: OPERATING SYSTEM | Change /etc/profile     
+  lineinfile: dest=/etc/profile line={{ item }}    
+  with_items:                                      
+    - 'export HISTTIMEFORMAT="%d/%m/%Y - %H:%M:%S - "'
+    - 'export HISTSIZE="5000"'                     
+    - 'export HISTFILESIZE="5000"'                 
+    - 'export TMOUT="120"'                         
+    - 'alias ls="ls -lh --color"'                  
+    - 'alias grep="grep --color"'                  
+    - 'alias rm="rm -i"'                           
+                                                    
+- name: OPERATING SYSTEM | Importing key "https://www.elrepo.org/RPM-GPG-KEY-elrepo.org"
+  rpm_key: key=https://www.elrepo.org/RPM-GPG-KEY-elrepo.org state=present
+                                                   
+- name: OPERATING SYSTEM | Installing epel-release and elrepo
+  yum:                                             
+    name:                                          
+      - epel-release                               
+      - https://www.elrepo.org/elrepo-release-7.el7.elrepo.noarch.rpm                                                                                                                                                                     
+    state: present                                 
+                                                    
+- name: OPERATING SYSTEM | Install common packages 
+  yum: name={{ common_packages_ctos }} state=latest
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
+
+- name: OPERATING SYSTEM | Insert update time 
+  cron: name='Atualizacao horario' minute='*/15' job='/usr/sbin/ntpdate -u b.st1.ntp.br'
+
+...

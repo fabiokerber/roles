@@ -1,10 +1,11 @@
 ---
 
 - name: Playbook
-  hosts: localhost
+  hosts: samba
   roles: 
-    - initial
+    #- initial
     #- install_vagrant
     #- install_docker
+    - install_samba
 
 ...

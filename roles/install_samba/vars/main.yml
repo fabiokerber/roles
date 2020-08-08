@@ -12,6 +12,5 @@ common_packages_ctos:
   - nmap
   - telnet
   - wget
-  - sshpass
 
 ...
