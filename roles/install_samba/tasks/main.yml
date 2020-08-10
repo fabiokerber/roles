@@ -102,7 +102,7 @@
     warn: false
 
 - name: SAMBA | Provisioning SAMBA with domain {{ domain }}.domain
-  shell: "cd /work0/argon-infra/samba4/bin/samba-tool && samba-tool domain provision --use-rfc2307 --server-role=dc --realm={{ domain }}.domain --domain={{ domain }} --adminpass=s3nh@001 --host-name=servidor --host-ip=192.168.99.10 --dns-backend=SAMBA_INTERNAL"
+  shell: "cd /work0/argon-infra/samba4/bin/ && samba-tool domain provision --use-rfc2307 --server-role=dc --realm={{ domain }}.domain --domain={{ domain }} --adminpass=s3nh@001 --host-name=servidor --host-ip=192.168.99.10 --dns-backend=SAMBA_INTERNAL"
   args:
     warn: false
 
