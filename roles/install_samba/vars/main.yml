@@ -1,6 +1,6 @@
 ---
 
-domain="lab"
+domain: lab
 
 common_packages_samba:
   - "@Development Tools"
