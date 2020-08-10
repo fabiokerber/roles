@@ -29,11 +29,6 @@
 - name: OPERATING SYSTEM | Inserting update time 
   cron: name='Time Update' minute='*/15' job='/usr/sbin/ntpdate -u b.st1.ntp.br'
 
-- name: OPERATING SYSTEM | Update timezone to America/Sao_Paulo
-  shell: timedatectl set-timezone America/Sao_Paulo
-  args:
-    warn: false
-
 - name: SAMBA | Inserting environment variables on /etc/rc.d/rc.local
   lineinfile:
       path: /etc/rc.d/rc.local
