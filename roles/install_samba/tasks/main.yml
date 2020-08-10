@@ -15,17 +15,41 @@
   rpm_key: key=https://www.elrepo.org/RPM-GPG-KEY-elrepo.org state=present
                                                    
 - name: OPERATING SYSTEM | Installing epel-release and elrepo
-  yum:                                             
+  dnf:                                             
     name:                                          
       - epel-release                               
       - https://www.elrepo.org/elrepo-release-7.el7.elrepo.noarch.rpm                                                                                                                                                                     
-    state: present                                 
+    state: latest                                 
                                                     
-- name: OPERATING SYSTEM | Install common packages 
-  yum: name={{ common_packages_ctos }} state=latest
-  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
-
 - name: OPERATING SYSTEM | Insert update time 
-  cron: name='Atualizacao horario' minute='*/15' job='/usr/sbin/ntpdate -u b.st1.ntp.br'
+  cron: name='Time Update' minute='*/15' job='/usr/sbin/ntpdate -u b.st1.ntp.br'
 
+- name: SAMBA | Insert environment variables on /etc/rc.d/rc.local
+  lineinfile:
+      path: /etc/rc.d/rc.local
+      line: |    
+        
+        SAMBA_HOME=/work0/argon-infra/samba4
+        PATH=$PATH:$SAMBA_HOME/bin
+        export PATH SAMBA_HOME
+      create: no
+
+- name: SAMBA | Insert environment variables on /etc/profile
+  lineinfile:
+      path: /etc/profile
+      line: |    
+        
+        SAMBA_HOME=/work0/argon-infra/samba4
+        PATH=$PATH:$SAMBA_HOME/bin
+        export PATH SAMBA_HOME
+      create: no
+
+- name: OPERATING SYSTEM | Running command . /etc/profile
+  shell: . /etc/profile
+  args:
+    warn: false
+
+#- name: SAMBA | Install common packages 
+#  yum: name={{ common_packages_samba }} state=latest
+ 
 ...
