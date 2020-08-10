@@ -1,2 +1,6 @@
 ---
-# handlers file for install_samba
+
+- name: Restart samba
+  systemd: state=restarted enabled=yes daemon_reload=yes name=samba-ad-dc.service
+
+...

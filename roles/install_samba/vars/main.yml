@@ -1,5 +1,7 @@
 ---
 
+domain="lab"
+
 common_packages_samba:
   - "@Development Tools"
   - acl
@@ -14,6 +16,7 @@ common_packages_samba:
   - chrpath
   - cups-devel
   - curl
+  - dbus
   - dbus-devel
   - docbook-dtds
   - docbook-style-xsl
@@ -35,7 +38,6 @@ common_packages_samba:
   - krb5-server
   - krb5-workstation
   - perl
-  - lcov
   - libacl-devel
   - libaio-devel
   - libarchive-devel
@@ -46,7 +48,6 @@ common_packages_samba:
   - libicu-devel
   - libxml2-devel
   - libpcap-devel
-  - libsemanage-python
   - libtasn1-devel
   - libtasn1-tools
   - libtirpc-devel
@@ -64,36 +65,24 @@ common_packages_samba:
   - perl-Archive-Tar
   - perl-ExtUtils-MakeMaker
   - perl-Parse-Yapp
-  - perl-Test-Base
   - perl-core
   - perl-generators
   - perl-interpreter
   - pkgconfig
-  - policycoreutils-python
   - popt-devel
   - procps-ng
-  - pygpgme
   - psmisc
   - python36
   - python3-pip
-  - python-crypto
-  - python-tools
-  - python-devel
-  - python-dns
-  - python-markdown
-  - python2-crypto
-  - python36-crypto
-  - python34
-  - python34-devel
-  - python36-cryptography
+  - python3-cryptography
+  - python3-dns
+  - python3-gpg
   - python36-devel
-  - python36-dns
-  - python36-markdown
-  - python36-pyasn1
-  - quota-devel
+  - readline
   - readline-devel
   - redhat-lsb
   - rng-tools
+  - rpcgen
   - rsync
   - sed
   - sudo

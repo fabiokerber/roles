@@ -1,6 +1,6 @@
 ---
 
-- name: OPERATING SYSTEM | Change /etc/profile     
+- name: OPERATING SYSTEM | Changing /etc/profile     
   lineinfile: dest=/etc/profile line={{ item }}    
   with_items:                                      
     - 'export HISTTIMEFORMAT="%d/%m/%Y - %H:%M:%S - "'
@@ -10,6 +10,11 @@
     - 'alias ls="ls -lh --color"'                  
     - 'alias grep="grep --color"'                  
     - 'alias rm="rm -i"'                           
+
+- name: SAMBA | Inserting servidor's IP in /etc/hosts
+  lineinfile: dest=/etc/hosts line={{ item }}
+  with_items:
+    - 192.168.99.10 servidor.{{ domain }}.domain servidor
                                                     
 - name: OPERATING SYSTEM | Importing key "https://www.elrepo.org/RPM-GPG-KEY-elrepo.org"
   rpm_key: key=https://www.elrepo.org/RPM-GPG-KEY-elrepo.org state=present
@@ -18,13 +23,18 @@
   dnf:                                             
     name:                                          
       - epel-release                               
-      - https://www.elrepo.org/elrepo-release-7.el7.elrepo.noarch.rpm                                                                                                                                                                     
+      - https://www.elrepo.org/elrepo-release-8.el8.elrepo.noarch.rpm                                                                                                                                                                     
     state: latest                                 
                                                     
-- name: OPERATING SYSTEM | Insert update time 
+- name: OPERATING SYSTEM | Inserting update time 
   cron: name='Time Update' minute='*/15' job='/usr/sbin/ntpdate -u b.st1.ntp.br'
 
-- name: SAMBA | Insert environment variables on /etc/rc.d/rc.local
+- name: OPERATING SYSTEM | Update timezone to America/Sao_Paulo
+  shell: timedatectl set-timezone America/Sao_Paulo
+  args:
+    warn: false
+
+- name: SAMBA | Inserting environment variables on /etc/rc.d/rc.local
   lineinfile:
       path: /etc/rc.d/rc.local
       line: |    
@@ -34,7 +44,7 @@
         export PATH SAMBA_HOME
       create: no
 
-- name: SAMBA | Insert environment variables on /etc/profile
+- name: SAMBA | Inserting environment variables on /etc/profile
   lineinfile:
       path: /etc/profile
       line: |    
@@ -49,7 +59,127 @@
   args:
     warn: false
 
-#- name: SAMBA | Install common packages 
-#  yum: name={{ common_packages_samba }} state=latest
- 
+- name: SAMBA | Installing common packages 
+  dnf: name={{ common_packages_samba }} state=latest
+
+- name: SAMBA | Creating /usr/bin/python symbol link 
+  file:
+      src: /usr/bin/python3.6
+      dest: /usr/bin/python
+      force: yes
+      state: link
+
+- name: SAMBA | Installing dnspython
+  shell: pip3.6 install dnspython
+  args:
+    warn: false
+
+- name: SAMBA | Creating folder /work0/argon-infra/samba4
+  file:
+      path: /work0/argon-infra/samba4
+      state: directory
+      mode: '0755'
+
+- name: SAMBA | Downloading samba-4.10.5.tar.gz
+  get_url:
+      url: https://download.samba.org/pub/samba/stable/samba-4.10.5.tar.gz
+      dest: /tmp/samba-4.10.5.tar.gz
+
+- name: SAMBA | Extracting file samba-4.10.5.tar.gz to /tmp/samba4 
+  unarchive:
+      src: /tmp/samba-4.10.5.tar.gz
+      dest: /tmp/
+      remote_src: yes
+
+- name: SAMBA | Configuring SAMBA on /work0/argon-infra/samba4
+  shell: cd /tmp/samba-4.10.5 && ./configure --prefix=/work0/argon-infra/samba4
+  args:
+    warn: false
+
+- name: SAMBA | Compilling SAMBA on /work0/argon-infra/samba4
+  shell: cd /tmp/samba-4.10.5 && make
+  args:
+    warn: false
+
+- name: SAMBA | Installing SAMBA on /work0/argon-infra/samba4
+  shell: cd /tmp/samba-4.10.5 && make install
+  args:
+    warn: false
+
+- name: SAMBA | Provisioning SAMBA with domain {{ domain }}.domain
+  shell: "cd /work0/argon-infra/samba4/bin/samba-tool && samba-tool domain provision --use-rfc2307 --server-role=dc --realm={{ domain }}.domain --domain={{ domain }} --adminpass=s3nh@001 --host-name=servidor --host-ip=192.168.99.10 --dns-backend=SAMBA_INTERNAL"
+  args:
+    warn: false
+
+- name: SAMBA | Provisioning SAMBA with domain {{ domain }}.domain
+  shell: \cp /work0/argon-infra/samba4/private/krb5.conf /etc/
+  args:
+    warn: false
+
+- name: SAMBA | Creating symbolik link
+  shell: ln -s /work0/argon-infra/samba4/lib/libnss_winbind.so.2 /lib/libnss_winbind.so
+  args:
+    warn: false
+
+- name: SAMBA | Creating symbolik link
+  shell: ln -s /lib/libnss_winbind.so /lib/libnss_winbind.so.2
+  args:
+    warn: false
+
+- name: SAMBA | Creating symbolik link
+  shell: ln -s /work0/argon-infra/samba4/lib/libnss_winbind.so.2 /lib64/libnss_winbind.so
+  args:
+    warn: false
+
+- name: SAMBA | Creating symbolik link
+  shell: ln -s /lib/libnss_winbind.so /lib64/libnss_winbind.so.2 
+  args:
+    warn: false
+
+- name: OPERATING SYSTEM | Building library cache
+  shell: /sbin/ldconfig 
+  args:
+    warn: false
+
+- name: SAMBA | Set search order
+  lineinfile:
+    dest=/etc/nsswitch.conf
+    state=present
+    regexp={{ item.regexp }}
+    line={{ item.line }}
+    backrefs=yes
+  with_items:
+    - { regexp: 'passwd:      sss files systemd', line: 'passwd:      sss files systemd winbind' }
+    - { regexp: 'group:       sss files systemd', line: 'group:       sss files systemd winbind' }
+
+- name: SAMBA | Creating service file
+  file:
+    path: /etc/systemd/system/samba-ad-dc.service
+    state: touch
+    mode: '0755'
+
+- name: SAMBA | Editing service file
+  lineinfile: dest=/etc/systemd/system/samba-ad-dc.service line={{ item }}    
+  with_items:                                      
+    - [Unit]
+    - Description=Samba 4 Active Directory
+    - After=syslog.target network.target remote-fs.target nss-lookup.target
+
+    - [Service]
+    - Type=forking
+    - LimitNOFILE=16384
+    - ExecStart=/work0/argon-infra/samba4/sbin/samba -D
+    - ExecReload=/usr/bin/kill -HUP $MAINPID
+    - PIDFile=/work0/argon-infra/samba4/var/run/samba.pid
+    - 
+    - [Install]
+    - WantedBy=multi-user.target
+
+- name: OPERATING SYSTEM | Reload systemctl daemon
+  shell:  systemctl daemon-reload
+  args:
+    warn: false
+  notify:
+    - Restart samba
+
 ...
