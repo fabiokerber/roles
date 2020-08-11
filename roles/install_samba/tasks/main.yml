@@ -199,14 +199,6 @@
   tags:
   - after_provision
 
-    #- name: SAMBA | Creating service file
-    #file:
-    #path: /etc/systemd/system/samba-ad-dc.service
-    #state: touch
-    #mode: '0755'
-    #tags:
-    #- after_provision
-
 - name: SAMBA | Creating service file
   lineinfile: 
       path: /etc/systemd/system/samba-ad-dc.service    
