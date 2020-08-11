@@ -16,7 +16,7 @@
 - name: SAMBA | Editing /etc/hosts
   lineinfile: dest=/etc/hosts line={{ item }}
   with_items:
-    - {{ ip_local }} servidor.{{ domain }}.domain servidor
+    - '{{ ip_local }} servidor.{{ domain1 }}.domain servidor'
   tags:
   - before_provision
 
@@ -31,7 +31,7 @@
   lineinfile:
       path: /etc/resolv.conf
       line: |
-        search {{ domain }}.domain
+        search {{ domain1 }}.domain
         nameserver {{ ip_local }}
         nameserver 1.1.1.1
       create: yes
@@ -110,35 +110,23 @@
   tags:
   - before_provision
 
+- name: SAMBA | Creating folders /work1{sistemas,imagens,documentos}
+  file:
+      path: "{{ item }}"
+      state: directory
+      mode: '0777'
+  with_items:
+    - /work1/sistemas
+    - /work1/imagens
+    - /work1/documentos
+  tags:
+  - before_provision
+
 - name: SAMBA | Creating folder /work0/argon-infra/samba4
   file:
       path: /work0/argon-infra/samba4
       state: directory
       mode: '0755'
-  tags:
-  - before_provision
-
-- name: SAMBA | Creating folder /work1/sistemas
-  file:
-      path: /work1/sistemas
-      state: directory
-      mode: '0777'
-  tags:
-  - before_provision
-
-- name: SAMBA | Creating folder /work1/imagens
-  file:
-      path: /work1/imagens
-      state: directory
-      mode: '0777'
-  tags:
-  - before_provision
-
-- name: SAMBA | Creating folder /work1/documentos
-  file:
-      path: /work1/documentos
-      state: directory
-      mode: '0777'
   tags:
   - before_provision
 
@@ -165,7 +153,7 @@
   tags:
   - before_provision
 
-- name: SAMBA | Compilling SAMBA on /work0/argon-infra/samba4
+- name: SAMBA | Compiling SAMBA on /work0/argon-infra/samba4
   shell: cd /tmp/samba-4.10.5 && make
   args:
     warn: false
@@ -264,6 +252,16 @@
   tags:
   - after_provision
 
+- name: SAMBA | Creating folder /work1/sistemas
+  file:
+      path: /work1/.lixeira
+      state: directory
+      owner: root
+      group: users
+      mode: '0775'
+  tags:
+  - after_provision
+
 - name: SAMBA | Copying smb.conf to /work0/argon-infra/samba4/etc/
   copy: src=smb.conf dest=/work0/argon-infra/samba4/etc/ backup=yes
   tags:
@@ -277,13 +275,13 @@
     line={{ item.line }}
     backrefs=yes
   with_items:
-    - { regexp: 'dns forwarder = GATEWAY', line: 'dns forwarder = {{ ip_gateway }}' }
-    - { regexp: 'interfaces = lo INTERFACE_HOSTONLY', line: 'interfaces = lo {{ interface_hostonly }}' }
-    - { regexp: 'realm = DOMAIN2.DOMAIN', line: 'realm = {{ domain2 }}.DOMAIN' }
-    - { regexp: 'workgroup = DOMAIN2', line: 'workgroup = {{ domain2 }}' }
-    - { regexp: 'idmap config DOMAIN1:schema_mode = rfc2307', line: 'idmap config {{ domain1 }}:schema_mode = rfc2307' }
-    - { regexp: 'idmap config DOMAIN1:unix_nss_info = yes', line: 'idmap config {{ domain1 }}:unix_nss_info = yes' }
-    - { regexp: 'path = /work0/argon-infra/samba4/var/locks/sysvol/DOMAIN1.domain/scripts', line: 'path = /work0/argon-infra/samba4/var/locks/sysvol/{{ domain1 }}.domain/scripts' }
+    - { regexp: 'dns forwarder = GATEWAY', line: '        dns forwarder = {{ ip_gateway }}' }
+    - { regexp: 'interfaces = lo INTERFACE_HOSTONLY', line: '        interfaces = lo {{ interface_hostonly }}' }
+    - { regexp: 'realm = DOMAIN2.DOMAIN', line: '        realm = {{ domain2 }}.DOMAIN' }
+    - { regexp: 'workgroup = DOMAIN2', line: '        workgroup = {{ domain2 }}' }
+    - { regexp: 'idmap config DOMAIN1:schema_mode = rfc2307', line: '        idmap config {{ domain1 }}:schema_mode = rfc2307' }
+    - { regexp: 'idmap config DOMAIN1:unix_nss_info = yes', line: '        idmap config {{ domain1 }}:unix_nss_info = yes' }
+    - { regexp: 'path = /work0/argon-infra/samba4/var/locks/sysvol/DOMAIN1.domain/scripts', line: '        path = /work0/argon-infra/samba4/var/locks/sysvol/{{ domain1 }}.domain/scripts' }
   tags:
   - after_provision
 

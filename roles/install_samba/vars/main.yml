@@ -1,7 +1,7 @@
 ---
 
-domain1: lab
-domain2: LAB
+domain1: home
+domain2: HOME
 interface_hostonly: eth1
 ip_local: 192.168.99.10
 ip_gateway: 192.168.99.1
