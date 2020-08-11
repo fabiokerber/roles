@@ -1,6 +1,10 @@
 ---
 
-domain: lab
+domain1: lab
+domain2: LAB
+interface_hostonly: eth1
+ip_local: 192.168.99.10
+ip_gateway: 192.168.99.1
 
 common_packages_samba:
   - "@Development Tools"
