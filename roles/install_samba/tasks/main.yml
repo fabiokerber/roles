@@ -101,10 +101,25 @@
   args:
     warn: false
 
-- name: SAMBA | Provisioning SAMBA with domain {{ domain }}.domain
-  shell: "cd /work0/argon-infra/samba4/bin/ && samba-tool domain provision --use-rfc2307 --server-role=dc --realm={{ domain }}.domain --domain={{ domain }} --adminpass=s3nh@001 --host-name=servidor --host-ip=192.168.99.10 --dns-backend=SAMBA_INTERNAL"
-  args:
-    warn: false
+#- name: SAMBA | Provisioning SAMBA with domain {{ domain }}.domain
+#  shell: "cd /work0/argon-infra/samba4/bin/ && samba-tool domain provision --use-rfc2307 --server-role=dc --realm={{ domain }}.domain --domain={{ domain }} --adminpass=s3nh@001 --host-name=servidor --host-ip=192.168.99.10 --dns-backend=SAMBA_INTERNAL"
+#  args:
+#    warn: false
+    
+- name: SAMBA | Creating service file
+  file:
+    path: /tmp/samba_provision.sh
+    state: touch
+    mode: '0755'
+
+- name: SAMBA | Editing file /tmp/provision.sh
+  lineinfile: dest=/tmp/samba_provision.sh line={{ item }}    
+  with_items:                                      
+    - '#!/bin/bash'
+    - '/work0/argon-infra/samba4/bin/samba-tool domain provision --use-rfc2307 --server-role=dc --realm={{ domain }}.domain --domain={{ domain }} --adminpass=s3nh@001 --option="interfaces=lo eth1" --option="bind interfaces only=yes" --host-name=servidor --host-ip=192.168.99.10 --dns-backend=SAMBA_INTERNAL'
+
+- name: SAMBA | Executing sudo sh /tmp/samba_provision.sh
+  shell: sudo sh /tmp/samba_provision.sh  
 
 - name: SAMBA | Provisioning SAMBA with domain {{ domain }}.domain
   shell: \cp /work0/argon-infra/samba4/private/krb5.conf /etc/
