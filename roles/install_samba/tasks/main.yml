@@ -33,6 +33,7 @@
       line: |
         search {{ domain1 }}.domain
         nameserver {{ ip_local }}
+        nameserver {{ ip_gateway }}
         nameserver 1.1.1.1
       create: yes
       mode: '0644'
