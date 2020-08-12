@@ -294,4 +294,28 @@
   tags:
   - after_provision
 
+- name: SAMBA | Testing {{ domain1 }}.domain
+  debug:
+    msg: "{{ lookup('pipe', '/work0/argon-infra/samba4/bin/wbinfo --ping-dc') }}"
+  tags:
+    - after_provision
+
+- name: SAMBA | Testing {{ domain1 }}.domain
+  debug:
+    msg: "{{ lookup('pipe', 'host -t SRV _ldap._tcp.{{ domain1 }}.domain') }}"
+  tags:
+    - after_provision
+
+- name: SAMBA | Testing {{ domain1 }}.domain
+  debug:
+    msg: "{{ lookup('pipe', 'host -t SRV _kerberos._udp.{{ domain1 }}.domain') }}"
+  tags:
+    - after_provision
+
+- name: SAMBA | Testing {{ domain1 }}.domain
+  debug:
+    msg: "{{ lookup('pipe', 'host -t A servidor.{{ domain1 }}.domain') }}"
+  tags:
+    - after_provision
+
 ...
