@@ -276,7 +276,7 @@
     backrefs=yes
   with_items:
     - { regexp: 'dns forwarder = GATEWAY', line: '        dns forwarder = {{ ip_gateway }}' }
-    - { regexp: 'interfaces = lo INTERFACE_HOSTONLY', line: '        interfaces = lo {{ interface_hostonly }}' }
+    - { regexp: 'interfaces = lo INTERFACE_HOSTONLY', line: '        interfaces = lo {{ interface_bridged }}' }
     - { regexp: 'realm = DOMAIN2.DOMAIN', line: '        realm = {{ domain2 }}.DOMAIN' }
     - { regexp: 'workgroup = DOMAIN2', line: '        workgroup = {{ domain2 }}' }
     - { regexp: 'idmap config DOMAIN1:schema_mode = rfc2307', line: '        idmap config {{ domain1 }}:schema_mode = rfc2307' }
