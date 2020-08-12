@@ -252,7 +252,7 @@
   tags:
   - after_provision
 
-- name: SAMBA | Creating folder /work1/sistemas
+- name: SAMBA | Creating recycle bin folder 
   file:
       path: /work1/.lixeira
       state: directory
@@ -291,6 +291,18 @@
     warn: false
   notify:
     - Restart samba
+  tags:
+  - after_provision
+
+- name: SAMBA | 
+  lineinfile: 
+      path: /etc/rsyslog.conf    
+      line: |                                      
+        
+        local5.notice /var/log/samba/samba-full_audit.log
+      create: no
+  notify:
+    - Restart rsyslog
   tags:
   - after_provision
 
