@@ -206,8 +206,8 @@
     line={{ item.line }}
     backrefs=yes
   with_items:
-    - { regexp: 'passwd:      sss files systemd', line: 'passwd:      sss files systemd winbind' }
-    - { regexp: 'group:       sss files systemd', line: 'group:       sss files systemd winbind' }
+    - { regexp: 'passwd:      sss files systemd', line: 'passwd:      sss files winbind systemd' }
+    - { regexp: 'group:       sss files systemd', line: 'group:       sss files winbind systemd' }
   tags:
   - after_provision
 
