@@ -1,7 +1,7 @@
 ---
 
 - name: Playbook
-  hosts: local
+  hosts: localhost
   roles: 
     #- initial
     #- install_vagrant
