@@ -54,7 +54,7 @@
   tags:
   - before_provision
 
-- name: OPERATING SYSTEM | Inserting update time 
+- name: OPERATING SYSTEM | Inserting update time job 
   cron: name='Time Update' minute='*/15' job='/usr/sbin/ntpdate -u b.st1.ntp.br'
   tags:
   - before_provision
@@ -108,26 +108,6 @@
   shell: pip3.6 install dnspython
   args:
     warn: false
-  tags:
-  - before_provision
-
-- name: SAMBA | Creating folders /work1{sistemas,imagens,documentos}
-  file:
-      path: "{{ item }}"
-      state: directory
-      mode: '0777'
-  with_items:
-    - /work1/sistemas
-    - /work1/imagens
-    - /work1/documentos
-  tags:
-  - before_provision
-
-- name: SAMBA | Creating folder /work0/argon-infra/samba4
-  file:
-      path: /work0/argon-infra/samba4
-      state: directory
-      mode: '0755'
   tags:
   - before_provision
 
@@ -231,27 +211,25 @@
   tags:
   - after_provision
 
-- name: SAMBA | Creating service file
-  lineinfile: 
-      path: /etc/systemd/system/samba-ad-dc.service    
-      line: |                                      
-        [Unit]
-        Description=Samba 4 Active Directory
-        After=syslog.target network.target remote-fs.target nss-lookup.target
-    
-        [Service]
-        Type=forking
-        LimitNOFILE=16384
-        ExecStart=/work0/argon-infra/samba4/sbin/samba -D
-        ExecReload=/usr/bin/kill -HUP $MAINPID
-        PIDFile=/work0/argon-infra/samba4/var/run/samba.pid
-        
-        [Install]
-        WantedBy=multi-user.target
-      create: yes
+- name: SAMBA | Creating folders /work1{sistemas,imagens,documentos}
+  file:
+      path: "{{ item }}"
+      state: directory
+      mode: '0777'
+  with_items:
+    - /work1/sistemas
+    - /work1/imagens
+    - /work1/documentos
+  tags:
+  - before_provision
+
+- name: SAMBA | Creating folder /work0/argon-infra/samba4
+  file:
+      path: /work0/argon-infra/samba4
+      state: directory
       mode: '0755'
   tags:
-  - after_provision
+  - before_provision
 
 - name: SAMBA | Creating recycle bin folder 
   file:
@@ -263,8 +241,13 @@
   tags:
   - after_provision
 
+- name: SAMBA | Copying samba-ad-dc.service to /etc/systemd/system/
+  copy: src=samba-ad-dc.service dest=/etc/systemd/system/samba-ad-dc.service mode='0755'
+  tags:
+  - after_provision
+
 - name: SAMBA | Copying smb.conf to /work0/argon-infra/samba4/etc/
-  copy: src=smb.conf dest=/work0/argon-infra/samba4/etc/ backup=yes
+  copy: src=smb.conf dest=/work0/argon-infra/samba4/etc/ backup=yes mode='0755'
   tags:
   - after_provision
 
