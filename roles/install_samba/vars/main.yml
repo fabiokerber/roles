@@ -4,7 +4,8 @@ domain1: home
 domain2: HOME
 interface_bridged: eth1
 ip_local: 192.168.0.200
-ip_gateway: 192.168.0.1
+dns1: 192.168.0.1
+dns2: 8.8.8.8
 
 common_packages_samba:
   - "@Development Tools"

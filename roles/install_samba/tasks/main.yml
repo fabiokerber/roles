@@ -33,8 +33,8 @@
       line: |
         search {{ domain1 }}.domain
         nameserver {{ ip_local }}
-        nameserver {{ ip_gateway }}
-        nameserver 1.1.1.1
+        nameserver {{ dns1 }}
+        nameserver {{ dns2 }}
       create: yes
       mode: '0644'
   tags:
@@ -259,7 +259,7 @@
     line={{ item.line }}
     backrefs=yes
   with_items:
-    - { regexp: 'dns forwarder = GATEWAY', line: '        dns forwarder = {{ ip_gateway }}' }
+    - { regexp: 'dns forwarder = GATEWAY', line: '        dns forwarder = {{ dns1 }} {{ dns2 }}' }
     - { regexp: 'interfaces = lo INTERFACE_HOSTONLY', line: '        interfaces = lo {{ interface_bridged }}' }
     - { regexp: 'realm = DOMAIN2.DOMAIN', line: '        realm = {{ domain2 }}.DOMAIN' }
     - { regexp: 'workgroup = DOMAIN2', line: '        workgroup = {{ domain2 }}' }
