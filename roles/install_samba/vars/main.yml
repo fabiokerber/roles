@@ -89,6 +89,7 @@ common_packages_samba:
   - rng-tools
   - rpcgen
   - rsync
+  - rsyslog
   - sed
   - sudo
   - systemd-devel
