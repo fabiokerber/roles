@@ -1,3 +1,10 @@
+# PREPARAÇÃO CTOS6
+
+Procedimentos para preparação do servidor ctos6 padrão Argon
+```
+https://docs.google.com/document/d/1Vj1eJ_CNfUmg0x0S1VVOMuIsCKhhuEEaKa0D2iTD8dk/edit?usp=sharing
+```
+
 # SAMBA
 
 Procedimentos para execução da role "install_samba"
