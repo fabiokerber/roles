@@ -16,15 +16,6 @@
         - kmod-drbd84
       state: present
 
-- name: DRBD | Replacing file /etc/drbd.conf
-  hosts: localhost
-  tasks:
-
-  - shell: yes | cp -f /etc/ansible/roles/install_drbd_argon/files/drbd.conf /etc/
-    failed_when: false
-    ignore_errors: yes
-
-
 - name: DRBD | Installing and Configuring DRBD synchronism
   hosts: localhost
 
