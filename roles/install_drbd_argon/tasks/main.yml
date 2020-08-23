@@ -12,7 +12,7 @@
         - kmod-drbd84
       state: present
 
-- name: DRBD | Replacing file /etc/drbd.conf
+- name: DRBD | Removing include lines in file /etc/drbd.conf
   hosts: localhost
   tasks:
 
