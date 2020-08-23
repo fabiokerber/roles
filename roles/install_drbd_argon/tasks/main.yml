@@ -1,3 +1,5 @@
+---
+
 - name: DRBD | Installing common packages
   hosts: localhost
   tasks:
@@ -127,4 +129,6 @@
         state: restarted
         enabled: yes
 
-    - shell: drbdadm -- --overwrite-data-of-peer primary {{ work }} 
+    - shell: drbdadm -- --overwrite-data-of-peer primary all
+    
+    ...
